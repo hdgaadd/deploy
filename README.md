@@ -6,7 +6,11 @@
 
 - 创建文件夹
 
-  cd /usr、mkdir java、cd java、mkdir jdk、上传
+  cd /usr、mkdir java、cd java、mkdir jdk
+
+- 上传jdk
+
+  cd /usr/java/jdk/jdk-11.0.16
 
 - 解压
 
@@ -14,30 +18,31 @@
 
 - 环境变量
 
-  - ```
-    vim /etc/profile
+  - 创建脚本
+
+    ```
+    touch /etc/profile.d/java.sh
     ```
 
   - 按i编辑
 
-  - ```
-    export JAVA_HOME=/usr/java/jdk1.8.0_271
+    ```
+    vim /etc/profile.d/java.sh
     
-    export JRE_HOME=${JAVA_HOME}/jre
+    JAVA_HOME=/usr/java/jdk/jdk-11.0.16
+    CLASSPATH=$JAVA_HOME/lib
+    PATH=$JAVA_HOME/bin:$PATH
+    export PATH JAVA_HOME CLASSPATH
     
-    export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib:$CLASSPATH
-    
-    export JAVA_PATH=${JAVA_HOME}/bin:${JRE_HOME}/bin
-    
-    export PATH=$PATH:${JAVA_PATH}
+    :wq
     ```
 
-  - :wq
+  - 使配置环境生效
 
-- 使配置环境生效
+    ```
+    source /etc/profile.d/java.sh
+    ```
 
-  source /etc/profile
-
-- 
+  - java -version
 
   
