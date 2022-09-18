@@ -14,7 +14,7 @@
 
 - [阿里云服务器恢复出厂设置](https://blog.csdn.net/liming1016/article/details/107605782)
 
-## Ubuntu部署JDK11.0.16
+## ubuntu部署JDK11.0.16
 
 - **创建文件夹**
 
@@ -71,9 +71,9 @@
 
 
 
-## Ubuntu部署JDK8u341
+## ubuntu部署JDK8u341
 
-> [reference address)](https://www.cnblogs.com/raoyulu/p/13265419.html#:~:text=二：linux系统中安装JDK8 1、下载jdk1.8 下载地址：,http%3A%2F%2Fwww.oracle.com%2Ftechnetwork%2Fjava%2Fjavase%2Fdownloads%2Fjdk8-downloads-2133151.html 根据操作系统的位数（显示x86_64 是64位，或者不显示为32位），选择对应jdk版本下载 2、通过Xftp工具将下载的jdk安装包上传至服务器)
+> [reference address](https://www.cnblogs.com/raoyulu/p/13265419.html#:~:text=二：linux系统中安装JDK8 1、下载jdk1.8 下载地址：,http%3A%2F%2Fwww.oracle.com%2Ftechnetwork%2Fjava%2Fjavase%2Fdownloads%2Fjdk8-downloads-2133151.html 根据操作系统的位数（显示x86_64 是64位，或者不显示为32位），选择对应jdk版本下载 2、通过Xftp工具将下载的jdk安装包上传至服务器)
 
 - **解压**
 
@@ -112,7 +112,7 @@
 
 
 
-## Ubuntu部署MySQL5.7.26
+## ubuntu部署MySQL5.7.26
 
 > [reference address](https://blog.csdn.net/qq_37598011/article/details/93489404)
 
@@ -250,7 +250,7 @@
 
 
 
-## Ubuntu部署Jar
+## ubuntu部署jar
 
 - **启动**
 
@@ -281,7 +281,7 @@
 
 
 
-## Ubuntu部署Nacos1.4.3
+## ubuntu部署Nacos1.4.3
 
 - **解压**
 
@@ -289,25 +289,34 @@
   tar -zxvf nacos-server-1.4.3.tar.gz
   ```
 
+- **关闭8848防火墙**
+
+  ```shell
+  ufw allow 8848
+  ```
+
+  ```shell
+  ufw status
+  ```
+
 - **启动**
 
   ```shell
   cd到bin目录
   
-  sh startup.sh -m standalone
+  ubuntu系统单机必须使用: bash startup.sh -m standalone
+  
+  ubuntu系统使用右边命令会报错web异常: sh startup.sh -m standalone
+  org.springframework.context.ApplicationContextException: Unable to start web server;...
   ```
 
 - **检查是否运行**
 
   ```shell
-  cd到bin目录
-  
-  sh shutdown.sh
-  
-  若打印，则表示没有运行成功: No nacosServer running.
+  curl http://127.0.0.1:8848/nacos
   ```
 
-- **访问**
+- **外网访问**
 
   ```
   http://公网ip:8848/nacos
@@ -316,6 +325,105 @@
 - **problems**
 
   - Nacos1.4.3只支持jdk8，jdk11环境下无法运行
+
+
+
+
+
+## Nacos1.4.3集群
+
+- **配置数据库源**
+
+  在nacos目录下的conf，修改**application.properties**，把以下注释去除
+
+  ```shell
+  #*************** Config Module Related Configurations ***************#
+  ### If use MySQL as datasource:
+   spring.datasource.platform=mysql
+  
+  ### Count of DB:
+   db.num=1
+  
+  ### Connect URL of DB:
+   db.url.0=jdbc:mysql://127.0.0.1:3306/nacos?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
+   db.user.0=账号
+   db.password.0=密码
+  
+  ```
+
+- **创建数据库**
+
+  ```mysql
+  create database nacos
+  ```
+
+- **创建表**
+
+  执行conf目录下的**nacos-mysql.sql**
+
+  ```mysql
+  CREATE TABLE `config_info` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `data_id` varchar(255) NOT NULL COMMENT 'data_id',
+    `group_id` varchar(255) DEFAULT NULL,
+    `content` longtext NOT NULL COMMENT 'content',
+    `md5` varchar(32) DEFAULT NULL COMMENT 'md5',
+    `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
+    `src_user` text COMMENT 'source user',
+    `src_ip` varchar(50) DEFAULT NULL COMMENT 'source ip',
+    `app_name` varchar(128) DEFAULT NULL,
+    `tenant_id` varchar(128) DEFAULT '' COMMENT '租户字段',
+    `c_desc` varchar(256) DEFAULT NULL,
+    `c_use` varchar(64) DEFAULT NULL,
+    `effect` varchar(64) DEFAULT NULL,
+    `type` varchar(64) DEFAULT NULL,
+    `c_schema` text,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_configinfo_datagrouptenant` (`data_id`,`group_id`,`tenant_id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='config_info';
+  ```
+
+
+
+
+
+## Nacos1.4.3多环境配置
+
+### bugs
+
+- springboot、spring-cloud-starter-alibaba-nacos-config、nacos的版本要对应得上
+
+  [version reference](https://blog.csdn.net/m0_45406092/article/details/123411227)
+
+- **yaml的变量类型为String，要添加""**
+
+  ```
+  environment:
+          content: halo, nacos-environment-dev
+  ```
+
+  ```
+  environment:
+          content: "halo, nacos-environment-dev"
+  ```
+
+- **nacos配置的文件名的格式有要求**
+
+  ```
+  项目模块名-命名空间环境名-文件名
+  ${prefix}-${spring.profiles.active}.${file-extension}
+  ```
+
+  ```
+  example-dev-yaml
+  
+  应该修改为
+  
+  example-dev.yaml
+  ```
+
+  
 
 
 
