@@ -1,4 +1,4 @@
-# deploy
+# ubuntu部署
 
 ## aliyun.com reference
 
@@ -14,7 +14,7 @@
 
 - [阿里云服务器恢复出厂设置](https://blog.csdn.net/liming1016/article/details/107605782)
 
-## ubuntu部署JDK11.0.16
+## JDK11.0.16
 
 - **创建文件夹**
 
@@ -71,7 +71,7 @@
 
 
 
-## ubuntu部署JDK8u341
+## JDK8u341
 
 > [reference address](https://www.cnblogs.com/raoyulu/p/13265419.html#:~:text=二：linux系统中安装JDK8 1、下载jdk1.8 下载地址：,http%3A%2F%2Fwww.oracle.com%2Ftechnetwork%2Fjava%2Fjavase%2Fdownloads%2Fjdk8-downloads-2133151.html 根据操作系统的位数（显示x86_64 是64位，或者不显示为32位），选择对应jdk版本下载 2、通过Xftp工具将下载的jdk安装包上传至服务器)
 
@@ -104,15 +104,12 @@
   java -version
   ```
 
-  
 
 
 
 
 
-
-
-## ubuntu部署MySQL5.7.26
+## MySQL5.7.26
 
 > [reference address](https://blog.csdn.net/qq_37598011/article/details/93489404)
 
@@ -223,21 +220,23 @@
   - 启动
 
     ```shell
-    service mysql start
+    service mysql start &
     ```
 
   - 查看是否启动
 
     ```shell
+    cd /usr/java/mysql/mysql-5.7.26-linux-glibc2.12-x86_64/bin
+    
     ./mysql -u账号 -p密码
     ```
-
+  
   - 关闭
   
     ```shell
     service mysql stop
     ```
-
+  
   - 登录
   
     ```shell
@@ -250,7 +249,7 @@
 
 
 
-## ubuntu部署jar
+## JAR
 
 - **启动**
 
@@ -281,7 +280,7 @@
 
 
 
-## ubuntu部署Nacos1.4.3
+## Nacos1.4.3
 
 - **解压**
 
@@ -423,13 +422,246 @@
   example-dev.yaml
   ```
 
+
+
+
+
+
+## Redis(ubuntu自带)
+
+> [reference address](https://www.redis.com.cn/redis-installation-on-ubuntu.html)
+
+- **安装ubuntu自带的Redis**
+
+  ```shell
+  sudo apt update 
+  sudo apt full-upgrade
+  sudo apt install build-essential tcl
   
+  
+  sudo apt-get install redis-server
+  ```
+
+- **启动**
+
+  ```shell
+  redis-server
+  ```
+
+- **停止**
+
+  > ubuntu默认会开机启动Redis，且**无法使用**kill -9或redis-cli shutdown停止Redis，可使用以下命令
+
+  ```shell
+  /etc/init.d/redis-server stop
+  ```
+
+- **bugs**
+
+  - **第一次启动出现以下异常**
+
+    ```
+    Could not create server TCP listening socket *:6379: bind: Address already in use
+    ```
+
+    ```
+    停止进程后重新启动
+    
+    /etc/init.d/redis-server stop
+    redis-server
+    ```
+
+    
+
+
+
+## RabbitMQ(ubuntu自带)
+
+> [reference address](https://www.jianshu.com/p/5c8c4495827f)
+
+- **安装erlong语言环境**
+
+  ```shell
+  sudo apt-get install erlang-nox
+  
+  检查是否成功安装
+  erl
+  ```
+
+- **添加公钥**
+
+  ```shell
+  wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | sudo apt-key add -
+  ```
+
+- **安装**
+
+  ```shell
+  sudo apt-get update
+  
+  sudo apt-get install rabbitmq-server
+  ```
+
+- **检查是否运行**
+
+  ```shell
+  systemctl status rabbitmq-server
+  ```
+
+- **启动、停止**
+
+  ```shell
+  sudo service rabbitmq-server start    # 启动
+  sudo service rabbitmq-server stop     # 停止
+  sudo service rabbitmq-server restart  # 重启 
+  ```
 
 
 
 
 
-## knowledge
+
+
+
+
+
+## maxwell1.38.0
+
+> [Quick Start - Maxwell's Daemon (maxwells-daemon.io)](https://maxwells-daemon.io/quickstart/)
+>
+> [Deployment - Maxwell's Daemon (maxwells-daemon.io)](https://maxwells-daemon.io/deployment/)
+>
+> [[897\]使用Maxwell实时同步mysql数据 - 腾讯云开发者社区-腾讯云 (tencent.com)](https://cloud.tencent.com/developer/article/1705132#:~:text= maxwell是由java编写的守护进程，可以实时读取mysql,binlog并将行更新以JSON格式写入kafka、rabbitMq、redis等中， 这样有了mysql增量数据流，使用场景就很多了，比如：实时同步数据到缓存，同步数据到ElasticSearch，数据迁移等等。)
+
+- **安装**
+
+  ```shell
+  curl -sLo - https://github.com/zendesk/maxwell/releases/download/v1.38.0/maxwell-1.38.0.tar.gz \
+         | tar zxvf -
+  ```
+
+- **配置MySQL**
+
+  ```shell
+  vim /etc/my.cnf
+  
+  server_id=1
+  log-bin=master
+  binlog_format=row
+  gtid-mode=ON
+  log-slave-updates=ON
+  enforce-gtid-consistency=true
+  ```
+
+  ```mysql
+  mysql> CREATE USER 'maxwell'@'%' IDENTIFIED BY 'XXXXXX';
+  mysql> CREATE USER 'maxwell'@'localhost' IDENTIFIED BY 'XXXXXX';
+  
+  mysql> GRANT ALL ON maxwell.* TO 'maxwell'@'%';
+  mysql> GRANT ALL ON maxwell.* TO 'maxwell'@'localhost';
+  
+  mysql> GRANT SELECT, REPLICATION CLIENT, REPLICATION SLAVE ON *.* TO 'maxwell'@'%';
+  mysql> GRANT SELECT, REPLICATION CLIENT, REPLICATION SLAVE ON *.* TO 'maxwell'@'localhost';
+  ```
+
+- **配置文件**
+
+  ```shell
+  cd /usr/java/maxwell/maxwell-1.38.0
+  
+  重命名
+  mv config.properties.example config.properties
+  
+  vim config.properties
+  ```
+
+  ```shell
+  # tl;dr config
+  log_level=info
+  
+  #producer=kafka
+  #kafka.bootstrap.servers=localhost:9092
+  
+  # mysql login info
+  host=localhost
+  user=root
+  password=root
+  
+  output_nulls=true
+  jdbc_options=autoReconnet=true
+  
+  #监控数据库中的哪些表
+  filter=exclude: *.*,include: maxwell.AA
+  
+  #replica_server_id 和 client_id 唯一标示，用于集群部署
+  replica_server_id=64
+  client_id=test-id
+  
+  #metrics_type=http
+  #metrics_slf4j_interval=60
+  #http_port=8111
+  #http_diagnostic=true # default false
+  
+  #rabbitmq
+  rabbitmq_host=localhost
+  rabbitmq_port=5672
+  rabbitmq_user=guest
+  rabbitmq_pass=guest
+  rabbitmq_virtual_host=/
+  rabbitmq_exchange=maxwell
+  rabbitmq_exchange_type=topic
+  rabbitmq_exchange_durable=false
+  rabbitmq_exchange_autodelete=false
+  rabbitmq_routing_key_template=%db%.%table%
+  rabbitmq_message_persistent=false
+  rabbitmq_declare_exchange=true
+  ```
+
+- **运行**
+
+  ```shell
+  cd /usr/java/maxwell/maxwell-1.38.0
+  
+  ./bin/maxwell --user='root' --password='root' --host='127.0.0.1' --producer=stdout
+  
+  或后台启动运行
+  ./bin/maxwell --user='root' --password='root' --host='127.0.0.1' --producer=stdout &
+  ```
+
+- **可配置**
+
+  - 监控的库
+
+  - 监控的表
+
+    ```
+    #监控数据库中的哪些表
+    filter=exclude: *.*,include: maxwell.AA
+    ```
+
+  - 可操作用户
+
+    ```
+    mysql> CREATE USER 'maxwell'@'%' IDENTIFIED BY 'XXXXXX';
+    ```
+
+### bugs
+
+- **maxwell-1.38.0要求的jdk版本必须 >= 11**
+
+  ```shell
+  Error: A JNI error has occurred, please check your installation and try again
+  Exception in thread "main" java.lang.UnsupportedClassVersionError: com/zendesk/maxwell/Maxwell has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+  ```
+
+
+
+
+
+
+
+
+# knowledge
 
 - **不能使用ps -ef | grep，来查看某服务是否运行**
 
@@ -438,5 +670,15 @@
   ```
   root       21442   21278  0 21:44 pts/0    00:00:00 grep --color=auto mysql.server
   ```
+
+- **JDK切换**
+
+  - jdk8 -> jdk11
+
+    注释/etc/profile
+
+  - jdk11 -> jdk8
+
+    注释/etc/profile.d/java.sh
 
 - 
