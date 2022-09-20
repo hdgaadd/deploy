@@ -249,7 +249,58 @@
 
 
 
-## JAR
+## MySQL8.0.30(自带)
+
+> [reference addressl](https://blog.csdn.net/wavehaha/article/details/114730222)
+
+- **安装**
+
+  ```shell
+  sudo apt-get update
+  
+  sudo apt-get install mysql-server
+  ```
+
+- **检查是否运行**
+
+  ```shell
+  systemctl status mysql.service
+  ```
+
+- **设置密码**
+
+  ```shell
+  sudo mysql_secure_installation
+  ```
+
+- **登录**
+
+  ```shell
+  在任何地方执行以下
+  
+  mysql -uroot -p
+  ```
+
+- **bugs**
+
+  E: Unable to locate package MySQL-server
+
+  ```shell
+  再执行以下命令
+  
+  sudo apt-get update
+  
+  sudo apt-get install mysql-server
+  ```
+
+
+
+
+
+
+
+
+## jar
 
 - **启动**
 
@@ -389,32 +440,30 @@
 
 ## Nacos1.4.3多环境配置
 
-### bugs
-
 - springboot、spring-cloud-starter-alibaba-nacos-config、nacos的版本要对应得上
 
   [version reference](https://blog.csdn.net/m0_45406092/article/details/123411227)
 
 - **yaml的变量类型为String，要添加""**
 
-  ```
+  ```yaml
   environment:
           content: halo, nacos-environment-dev
   ```
 
-  ```
+  ```yaml
   environment:
           content: "halo, nacos-environment-dev"
   ```
 
 - **nacos配置的文件名的格式有要求**
 
-  ```
+  ```yaml
   项目模块名-命名空间环境名-文件名
   ${prefix}-${spring.profiles.active}.${file-extension}
   ```
 
-  ```
+  ```yaml
   example-dev-yaml
   
   应该修改为
@@ -427,7 +476,7 @@
 
 
 
-## Redis(ubuntu自带)
+## Redis(自带)
 
 > [reference address](https://www.redis.com.cn/redis-installation-on-ubuntu.html)
 
@@ -475,7 +524,7 @@
 
 
 
-## RabbitMQ(ubuntu自带)
+## RabbitMQ(自带)
 
 > [reference address](https://www.jianshu.com/p/5c8c4495827f)
 
@@ -645,18 +694,14 @@
     mysql> CREATE USER 'maxwell'@'%' IDENTIFIED BY 'XXXXXX';
     ```
 
-### bugs
+- **bugs**
 
-- **maxwell-1.38.0要求的jdk版本必须 >= 11**
+  - **maxwell-1.38.0要求的jdk版本必须 >= 11**
 
-  ```shell
-  Error: A JNI error has occurred, please check your installation and try again
-  Exception in thread "main" java.lang.UnsupportedClassVersionError: com/zendesk/maxwell/Maxwell has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
-  ```
-
-
-
-
+    ```shell
+    Error: A JNI error has occurred, please check your installation and try again
+    Exception in thread "main" java.lang.UnsupportedClassVersionError: com/zendesk/maxwell/Maxwell has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+    ```
 
 
 
