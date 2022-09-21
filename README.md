@@ -1,4 +1,4 @@
-# ubuntu部署
+# Ubuntu22.04部署
 
 ## aliyun.com reference
 
@@ -103,6 +103,16 @@
   ```shell
   java -version
   ```
+
+- **卸载**
+
+  ```shell
+  dpkg --list | grep -i jdk
+  apt-get purge jdk*
+  apt-get purge icedtea-* jdk-*
+  ```
+
+
 
 
 
@@ -293,7 +303,23 @@
   sudo apt-get install mysql-server
   ```
 
+- **卸载**
 
+  > [reference address](https://blog.csdn.net/w3045872817/article/details/77334886)
+
+  ```shell
+  查看安装依赖项
+  dpkg --list|grep mysql
+  
+  sudo apt-get remove mysql-common
+  
+  sudo apt-get autoremove --purge mysql-server-8.0
+  
+  清除残留数据
+  dpkg -l |grep ^rc|awk '{print $2}' |sudo xargs dpkg -P
+  ```
+
+  
 
 
 
@@ -677,22 +703,65 @@
   ./bin/maxwell --user='root' --password='root' --host='127.0.0.1' --producer=stdout &
   ```
 
-- **可配置**
 
-  - 监控的库
 
-  - 监控的表
 
+
+
+
+- **knowledge**
+
+  - **binlog是ubuntu的日志文件，mysql-bin是win的日志文件**
+
+    - win
+
+      ```shell
+      show master logs;
+      +------------------+-----------+
+      | Log_name         | File_size |
+      +------------------+-----------+
+      | mysql-bin.000001 |       393 |
+      +------------------+-----------+
+      ```
+
+    - ubuntu
+
+      ```shell
+      show master logs;
+      +---------------+-----------+-----------+
+      | Log_name      | File_size | Encrypted |
+      +---------------+-----------+-----------+
+      | binlog.000001 |       180 | No        |
+      | binlog.000002 |       404 | No        |
+      | binlog.000003 |       180 | No        |
+      | binlog.000004 |       180 | No        |
+      | binlog.000005 |       404 | No        |
+      | binlog.000006 |      1522 | No        |
+      +---------------+-----------+-----------+
+      ```
+
+  - **查看MySQL日志文件**
+
+    > https://www.jianshu.com/p/3eb4c44307c1
+
+    ```shell
+    // 查看是否设置日志
+    show variables like 'log_%';
+    
+    // 展示所有biglog，最底下的最新
+    show master logs;
+    
+    // 删除所有biglog
+    reset master; 
+    
+    // 打印某个biglog，ubuntu默认是在/var/lib/mysql/binlog
+    /usr/bin/mysqlbinlog /var/lib/mysql/binlog.000001
+    
+    // 由于Base64编码，导致SQL打印看不清楚，可使用以下命令
+    /usr/bin/mysqlbinlog --base64-output=decode-rows -v /var/lib/mysql/binlog.000001
     ```
-    #监控数据库中的哪些表
-    filter=exclude: *.*,include: maxwell.AA
-    ```
 
-  - 可操作用户
-
-    ```
-    mysql> CREATE USER 'maxwell'@'%' IDENTIFIED BY 'XXXXXX';
-    ```
+    
 
 - **bugs**
 
@@ -702,8 +771,6 @@
     Error: A JNI error has occurred, please check your installation and try again
     Exception in thread "main" java.lang.UnsupportedClassVersionError: com/zendesk/maxwell/Maxwell has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
     ```
-
-
 
 
 # knowledge
