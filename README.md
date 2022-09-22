@@ -755,13 +755,32 @@
     reset master; 
     
     // 打印某个biglog，ubuntu默认是在/var/lib/mysql/binlog
-    /usr/bin/mysqlbinlog /var/lib/mysql/binlog.000001
+    /usr/bin/mysqlbinlog /var/lib/mysql/binlog.000005
     
     // 由于Base64编码，导致SQL打印看不清楚，可使用以下命令
     /usr/bin/mysqlbinlog --base64-output=decode-rows -v /var/lib/mysql/binlog.000001
     ```
 
-    
+- **bin设置成什么，日志文件就是什么名称**
+
+  ```
+  binlog_format=row
+  server_id=1 
+  log-bin=master
+  ```
+
+  ```
+  mysql> show master logs;
+  +---------------+-----------+-----------+
+  | Log_name      | File_size | Encrypted |
+  +---------------+-----------+-----------+
+  | master.000001 |       498 | No        |
+  +---------------+-----------+-----------+
+  1 row in set (0.00 sec)
+  
+  ```
+
+  
 
 - **bugs**
 
@@ -792,5 +811,3 @@
   - jdk11 -> jdk8
 
     注释/etc/profile.d/java.sh
-
-- 
