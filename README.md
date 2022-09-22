@@ -291,6 +291,25 @@
   mysql -uroot -p
   ```
 
+- **knowledge**
+
+  - 以下打印，是询问**是否**使用**密码强度判断组件**，若选择是，则root等简单密码无法设置
+
+    ```
+    Securing the MySQL server deployment.
+    
+    Connecting to MySQL using a blank password.
+    
+    VALIDATE PASSWORD COMPONENT can be used to test passwords
+    and improve security. It checks the strength of password
+    and allows the users to set only those passwords which are
+    secure enough. Would you like to setup VALIDATE PASSWORD component?
+    
+    Press y|Y for Yes, any other key for No: 
+    ```
+
+    
+
 - **bugs**
 
   E: Unable to locate package MySQL-server
@@ -602,112 +621,123 @@
 
 ## maxwell1.38.0
 
-> [Quick Start - Maxwell's Daemon (maxwells-daemon.io)](https://maxwells-daemon.io/quickstart/)
+> [official](https://maxwells-daemon.io/quickstart/)
 >
-> [Deployment - Maxwell's Daemon (maxwells-daemon.io)](https://maxwells-daemon.io/deployment/)
+> [reference address](https://blog.csdn.net/Allenzyg/article/details/105810760)
 >
-> [[897\]使用Maxwell实时同步mysql数据 - 腾讯云开发者社区-腾讯云 (tencent.com)](https://cloud.tencent.com/developer/article/1705132#:~:text= maxwell是由java编写的守护进程，可以实时读取mysql,binlog并将行更新以JSON格式写入kafka、rabbitMq、redis等中， 这样有了mysql增量数据流，使用场景就很多了，比如：实时同步数据到缓存，同步数据到ElasticSearch，数据迁移等等。)
+> 软件版本: Ubuntu22.04、JDK11.0.16、MySQL8.0.30、maxwell1.38.0
 
-- **安装**
-
-  ```shell
-  curl -sLo - https://github.com/zendesk/maxwell/releases/download/v1.38.0/maxwell-1.38.0.tar.gz \
-         | tar zxvf -
-  ```
-
-- **配置MySQL**
+- **配置binlog**
 
   ```shell
   vim /etc/my.cnf
-  
+  ```
+
+  ```shell
+  [mysql_d]
   server_id=1
   log-bin=master
   binlog_format=row
-  gtid-mode=ON
-  log-slave-updates=ON
-  enforce-gtid-consistency=true
   ```
 
-  ```mysql
-  mysql> CREATE USER 'maxwell'@'%' IDENTIFIED BY 'XXXXXX';
-  mysql> CREATE USER 'maxwell'@'localhost' IDENTIFIED BY 'XXXXXX';
-  
-  mysql> GRANT ALL ON maxwell.* TO 'maxwell'@'%';
-  mysql> GRANT ALL ON maxwell.* TO 'maxwell'@'localhost';
-  
-  mysql> GRANT SELECT, REPLICATION CLIENT, REPLICATION SLAVE ON *.* TO 'maxwell'@'%';
-  mysql> GRANT SELECT, REPLICATION CLIENT, REPLICATION SLAVE ON *.* TO 'maxwell'@'localhost';
+  ```shell
+  service mysql restart
   ```
 
-- **配置文件**
+- **MySQL创建maxwell用户**
+
+  ```shell
+  mysql -uroot -proot
+  ```
+
+  以下直接沾沾即可全部执行
+
+  ```shell
+  CREATE database maxwell;
+  CREATE USER 'maxwell'@'%' IDENTIFIED BY 'maxwell';
+  GRANT ALL ON maxwell.* TO 'maxwell'@'%';
+  GRANT SELECT, REPLICATION CLIENT, REPLICATION SLAVE ON *.* TO 'maxwell'@'%';
+  flush privileges;
+  ```
+
+- **编辑maxwell配置文件**
 
   ```shell
   cd /usr/java/maxwell/maxwell-1.38.0
   
-  重命名
   mv config.properties.example config.properties
   
   vim config.properties
   ```
 
+  以下**都是**config.properties的内容，**只需**修改源文件的password=maxwell，**修改为**password=root即可
+
   ```shell
   # tl;dr config
   log_level=info
   
-  #producer=kafka
-  #kafka.bootstrap.servers=localhost:9092
+  producer=kafka
+  kafka.bootstrap.servers=localhost:9092
   
   # mysql login info
   host=localhost
-  user=root
+  user=maxwell
   password=root
-  
-  output_nulls=true
-  jdbc_options=autoReconnet=true
-  
-  #监控数据库中的哪些表
-  filter=exclude: *.*,include: maxwell.AA
-  
-  #replica_server_id 和 client_id 唯一标示，用于集群部署
-  replica_server_id=64
-  client_id=test-id
-  
-  #metrics_type=http
-  #metrics_slf4j_interval=60
-  #http_port=8111
-  #http_diagnostic=true # default false
-  
-  #rabbitmq
-  rabbitmq_host=localhost
-  rabbitmq_port=5672
-  rabbitmq_user=guest
-  rabbitmq_pass=guest
-  rabbitmq_virtual_host=/
-  rabbitmq_exchange=maxwell
-  rabbitmq_exchange_type=topic
-  rabbitmq_exchange_durable=false
-  rabbitmq_exchange_autodelete=false
-  rabbitmq_routing_key_template=%db%.%table%
-  rabbitmq_message_persistent=false
-  rabbitmq_declare_exchange=true
   ```
 
 - **运行**
 
   ```shell
-  cd /usr/java/maxwell/maxwell-1.38.0
-  
-  ./bin/maxwell --user='root' --password='root' --host='127.0.0.1' --producer=stdout
-  
-  或后台启动运行
-  ./bin/maxwell --user='root' --password='root' --host='127.0.0.1' --producer=stdout &
+  bin/maxwell --user='maxwell' --password='maxwell' --host='127.0.0.1' --producer=stdout
   ```
 
+- **创建非maxwell数据库，编写SQL测试，注意是非maxwell数据库**
 
+  ```shell
+  CREATE DATABASE hdgaadd;
+  
+  use hdgaadd;
+  
+  DROP TABLE IF EXISTS `test`;
+  CREATE TABLE `test`  (
+    `id` int(11) NULL DEFAULT NULL,
+    `name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL
+  ) ENGINE = InnoDB CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+  
+  INSERT INTO `test`(`id`, `name`) VALUES (1, '1');
+  UPDATE `test` SET `id` = 1, `name` = '1333333333' WHERE `id` = 1 LIMIT 1;
+  DELETE FROM `test`;
+  ```
 
+- **bugs**
 
+  - **测试数据库必须使用非maxwell**
 
+    若**使用maxwell数据库**，会出现插入、更新表，maxwell**没有监听**到
 
+    ```mysql
+    CREATE DATABASE hdgaadd
+    
+    user hdgaadd;
+    ```
+
+  - **maxwell-1.38.0要求的jdk版本必须 >= 11**
+
+    ```shell
+    Error: A JNI error has occurred, please check your installation and try again
+    Exception in thread "main" java.lang.UnsupportedClassVersionError: com/zendesk/maxwell/Maxwell has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+    ```
+
+  - **ERROR: Operation CREATE USER failed for 'maxwell'@'%**
+
+    ```shell
+    删除该用户后创建
+    drop user maxwell
+    
+    若是以下异常，则执行以下命令
+    ERROR: Operation CREATE USER failed for 'maxwell'@'%localhos'
+    drop user 'maxwell'@'localhost';
+    ```
 
 - **knowledge**
 
@@ -740,9 +770,28 @@
       +---------------+-----------+-----------+
       ```
 
+  - **bin设置成什么，日志文件就是什么名称**
+
+    ```shell
+    binlog_format=row
+    server_id=1 
+    log-bin=master
+    ```
+
+    ```shell
+    mysql> show master logs;
+    +---------------+-----------+-----------+
+    | Log_name      | File_size | Encrypted |
+    +---------------+-----------+-----------+
+    | master.000001 |       498 | No        |
+    +---------------+-----------+-----------+
+    1 row in set (0.00 sec)
+    
+    ```
+
   - **查看MySQL日志文件**
 
-    > https://www.jianshu.com/p/3eb4c44307c1
+    > [reference](https://www.jianshu.com/p/3eb4c44307c1)
 
     ```shell
     // 查看是否设置日志
@@ -750,6 +799,14 @@
     
     // 展示所有biglog，最底下的最新
     show master logs;
+    +---------------+-----------+-----------+
+    | Log_name      | File_size | Encrypted |
+    +---------------+-----------+-----------+
+    | binlog.000001 |       180 | No        |
+    | binlog.000002 |       404 | No        |
+    | binlog.000003 |       180 | No        |
+    | binlog.000004 |    111875 | No        |
+    +---------------+-----------+-----------+
     
     // 删除所有biglog
     reset master; 
@@ -757,46 +814,25 @@
     // 打印某个biglog，ubuntu默认是在/var/lib/mysql/binlog
     /usr/bin/mysqlbinlog /var/lib/mysql/binlog.000005
     
-    // 由于Base64编码，导致SQL打印看不清楚，可使用以下命令
+    // 由于Base64编码，导致SQL打印看不清楚，可使用以下命令（打印最后一个binlog可查看最新记录）
     /usr/bin/mysqlbinlog --base64-output=decode-rows -v /var/lib/mysql/binlog.000001
     ```
 
-- **bin设置成什么，日志文件就是什么名称**
-
-  ```
-  binlog_format=row
-  server_id=1 
-  log-bin=master
-  ```
-
-  ```
-  mysql> show master logs;
-  +---------------+-----------+-----------+
-  | Log_name      | File_size | Encrypted |
-  +---------------+-----------+-----------+
-  | master.000001 |       498 | No        |
-  +---------------+-----------+-----------+
-  1 row in set (0.00 sec)
-  
-  ```
-
-  
-
-- **bugs**
-
-  - **maxwell-1.38.0要求的jdk版本必须 >= 11**
+  - **Linux中binlog的文件地址**
 
     ```shell
-    Error: A JNI error has occurred, please check your installation and try again
-    Exception in thread "main" java.lang.UnsupportedClassVersionError: com/zendesk/maxwell/Maxwell has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+    cd /var/lib/mysql/
     ```
+
+    
+
 
 
 # knowledge
 
 - **不能使用ps -ef | grep，来查看某服务是否运行**
 
-  mysql**关闭**后，执行**ps -ef | grep mysql.server**:，仍打印以下，故不能
+  MySQL**关闭**后，执行**ps -ef | grep mysql.server**:，仍打印以下，故不能
 
   ```
   root       21442   21278  0 21:44 pts/0    00:00:00 grep --color=auto mysql.server
