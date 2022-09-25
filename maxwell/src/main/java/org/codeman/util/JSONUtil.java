@@ -1,4 +1,4 @@
-package org.codeman;
+package org.codeman.util;
 
 import com.alibaba.fastjson.JSONObject;
 

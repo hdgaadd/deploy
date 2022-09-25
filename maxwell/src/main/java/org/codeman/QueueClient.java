@@ -3,13 +3,15 @@ package org.codeman;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DeliverCallback;
 import lombok.extern.slf4j.Slf4j;
+import org.codeman.util.JSONUtil;
+import org.codeman.util.MQConnectionUtil;
 
 /**
  * @author hdgaadd
  * Created on 2022/09/24
  */
 @Slf4j
-public class ConsumerQueue {
+public class QueueClient {
     /**
      * 交换机
      */
