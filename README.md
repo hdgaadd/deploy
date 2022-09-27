@@ -941,7 +941,98 @@
 
     
 
+## Zookeeper3.6.3
 
+> [reference](https://blog.csdn.net/cwb228/article/details/122894192?ops_request_misc=%7B%22request%5Fid%22%3A%22166426339916800180634632%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&request_id=166426339916800180634632&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~baidu_landing_v2~default-2-122894192-null-null.nonecase&utm_term=ZooKeeper的安装部署&spm=1018.2226.3001.4450)
+>
+> [download address](https://downloads.apache.org/zookeeper/zookeeper-3.6.3/)
+
+- **创建log文件夹**
+
+  ```shell
+  cd /usr/java/zookeeper/apache-zookeeper-3.6.3-bin/
+  
+  mkdir data
+  cd data
+  mkdir snapshot
+  mkdir log
+  ```
+
+- **连接JDK**
+
+  ```shell
+  cd /usr/java/zookeeper/apache-zookeeper-3.6.3-bin/conf
+  
+  touch java.env
+  vi java.env
+  ```
+
+  ```shell
+  如果是jdk8，需要修改JAVA_HOME位置
+  
+  #!/bin/sh
+  #配置JDK目录
+  export JAVA_HOME=/usr/java/jdk/jdk-11.0.16
+  #配置JVM参数
+  export JVMFLAGS="-Xms1024m -Xmx1024m $JVMFLAGS"
+  ```
+
+  ```shell
+  修改java.env文件执行权限
+  chmod u+x java.env
+  ```
+
+- **修改Zookeeper配置文件**
+
+  ```shell
+  cd /usr/java/zookeeper/apache-zookeeper-3.6.3-bin/conf
+  
+  cd /usr/java/zookeeper/apache-zookeeper-3.6.3-bin/conf
+  
+  vi zoo.cfg
+  全部cv即可
+  ```
+
+  ```shell
+  # The number of milliseconds of each tick
+  tickTime=2000
+  # The number of ticks that the initial 
+  # synchronization phase can take
+  initLimit=10
+  # The number of ticks that can pass between 
+  # sending a request and getting an acknowledgement
+  syncLimit=5
+  # the directory where the snapshot is stored.
+  # do not use /tmp for storage, /tmp here is just 
+  # example sakes.
+  dataDir=/tmp/zookeeper
+  # the port at which the clients will connect
+  clientPort=2181
+  # The number of snapshots to retain in dataDir
+  autopurge.snapRetainCount=3
+  # Purge task interval in hours
+  # Set to "0" to disable auto purge feature
+  autopurge.purgeInterval=1
+  #事务日志存储目录
+  dataLogDir=/usr/java/zookeeper/apache-zookeeper-3.6.3-bin/data/log
+  #HTTP方式查看服务信息
+  admin.serverPort=8081
+  #开启审核日志
+  audit.enable=true
+  ```
+
+- **启动与停止**
+
+  ```shell
+  ./zkServer.sh start
+  ./zkServer.sh stop
+  ```
+
+  
+
+## Kafka
+
+> [Index of /kafka/2.8.2 (apache.org)](https://downloads.apache.org/kafka/2.8.2/)
 
 
 
