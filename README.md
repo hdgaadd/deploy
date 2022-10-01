@@ -499,7 +499,7 @@
 
 
 
-# Nacos1.4.3多环境配置
+# Nacos多环境配置
 
 ## 1. Nacos1.4.3
 
@@ -581,6 +581,54 @@
   
   example-dev.yaml
   ```
+
+
+
+
+
+
+
+# 定时系统方案
+
+## 1. Redis集群搭建
+
+> [reference](https://blog.csdn.net/qq_42815754/article/details/82832335)
+>
+> [reference](https://blog.csdn.net/qq_42815754/article/details/82912130)
+
+- **download & install**
+
+  ```
+  wget http://download.redis.io/releases/redis-3.0.0.tar.gz
+  
+  // 安装c++
+  sudo apt-get install gcc-c++
+  
+  tar -zxvf redis-3.0.0.tar.gz
+  ```
+
+  ```
+  // 编译
+  
+  cd /usr/java/redis/redis-3.0.0
+  make
+  make install PREFIX=/usr/java/redis/redis-3.0.0-build
+  ```
+
+- **run**
+
+  ```
+  /usr/java/redis/redis-3.0.0-build/bin/redis-server
+  ```
+
+- **config**
+
+  ```
+  
+  mkdir redis-cluster
+  ```
+
+  
 
 
 
