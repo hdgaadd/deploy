@@ -23,8 +23,17 @@ public class Runner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+//        Config config = new Config();
+//        config.useSingleServer().setAddress("redis://106.14.172.7:6379");
+
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://106.14.172.7:6379");
+        config.useClusterServers()
+                // use "rediss://" for SSL connection
+//                .addNodeAddress("redis://106.14.172.7:7001", "redis://106.14.172.7:7002",  "redis://106.14.172.7:7003", "redis://106.14.172.7:7004", "redis://106.14.172.7:7005", "redis://106.14.172.7:7006");
+                .addNodeAddress("redis://106.14.172.7:7001");
+        config.useClusterServers().addNodeAddress("redis://106.14.172.7:7002");
+        config.useClusterServers().addNodeAddress("redis://106.14.172.7:7003");
+
         RedissonClient redissonClient = Redisson.create(config);
         RBlockingQueue<Clock> blockingFairQueue = redissonClient.getBlockingQueue("delay_queue");
 

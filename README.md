@@ -1,4 +1,4 @@
-# Maxwell数据迁移方案
+# 数据迁移方案
 
 > deploy environment: Ubuntu 20.04 64位
 
@@ -598,7 +598,7 @@
 
 - **download & install**
 
-  ```
+  ```shell
   wget http://download.redis.io/releases/redis-3.0.0.tar.gz
   
   // 安装c++
@@ -607,7 +607,7 @@
   tar -zxvf redis-3.0.0.tar.gz
   ```
 
-  ```
+  ```shell
   // 编译
   
   cd /usr/java/redis/redis-3.0.0
@@ -615,20 +615,227 @@
   make install PREFIX=/usr/java/redis/redis-3.0.0-build
   ```
 
-- **run**
+- **运行单机Redis**
 
-  ```
+  ```shell
   /usr/java/redis/redis-3.0.0-build/bin/redis-server
   ```
 
-- **config**
+- **配置集群配置**
 
-  ```
+  ```shell
+  // 复制conf到bin
+  cd /usr/java/redis/redis-3.0.0
+  cp -r /usr/java/redis/redis-3.0.0/redis.conf /usr/java/redis/redis-3.0.0-build/bin
+  
+  
+  // 将bin文件移动到/usr/local下新创建的文件夹
+  cd /usr/local
   
   mkdir redis-cluster
+  
+  cp -r /usr/java/redis/redis-3.0.0-build/bin redis-cluster/redis01
+  
+  cd /usr/local/redis-cluster/redis01
+  rm -rf dump.rdb
+  
+  vim redis.conf
+  ```
+
+  修改配置如下，其中cluster-enabled yes的位置在632行
+
+  ```shell
+  daemonize yes
+  
+  port 6001
+  
+  ################################ REDIS CLUSTER  ###############################
+  cluster-enabled yes
+  ```
+
+- **创建多个节点配置**
+
+  ```shell
+  cd /usr/local/redis-cluster
+  
+  cp -r redis01/ redis02
+  cp -r redis01/ redis03
+  cp -r redis01/ redis04
+  cp -r redis01/ redis05
+  cp -r redis01/ redis06
+  
+  每个redis0*的redis.conf的port修改为:port 700*，如redis03修改为port 7003
+  ```
+
+- **创建启动文件**
+
+  ```shell
+  cd /usr/local/redis-cluster
+  
+  touch start-all.sh
+  ```
+
+  ```shell
+  cd redis01
+  ./redis-server redis.conf
+  cd ..
+  cd redis02
+  ./redis-server redis.conf
+  cd ..
+  cd redis03
+  ./redis-server redis.conf
+  cd ..
+  cd redis04
+  ./redis-server redis.conf
+  cd ..
+  cd redis05
+  ./redis-server redis.conf
+  cd ..
+  cd redis06
+  ./redis-server redis.conf
+  cd ..
+  ```
+
+  ```shell
+  // 赋予文件权限
+  chmod +x start-all.sh
+  ```
+
+- **运行**
+
+  ```shell
+  ./start-all.sh
+  ```
+
+- **判断是否运行**
+
+  ```shell
+  ps -ef | grep redis
+  
+  root       37632       1  0 11:35 ?        00:00:01 ./redis-server *:7001 [cluster]
+  root       37636       1  0 11:35 ?        00:00:01 ./redis-server *:7002 [cluster]
+  root       37640       1  0 11:35 ?        00:00:01 ./redis-server *:7003 [cluster]
+  root       37644       1  0 11:35 ?        00:00:01 ./redis-server *:7004 [cluster]
+  root       37648       1  0 11:35 ?        00:00:01 ./redis-server *:7005 [cluster]
+  root       37652       1  0 11:35 ?        00:00:01 ./redis-server *:7006 [cluster]
+  root       38515   37599  0 12:03 pts/0    00:00:00 grep --color=auto redis
+  ```
+
+- **安装Redis脚本**
+
+  ```shell
+  // 安装脚本运行环境
+  sudo apt update 
+  sudo apt full-upgrade
+  sudo apt install ruby
+  
+  cd /
+  wget http://rubygems.org/downloads/redis-3.0.0.gem
+  
+  gem install redis-3.0.0.gem
+  ```
+
+- **启动集群**
+
+  > [运行命令reference](https://blog.csdn.net/huangxuanheng/article/details/123645185)
+
+  ```shell
+  cp -r /usr/java/redis/redis-3.0.0/src/redis-trib.rb /usr/local/redis-cluster
+  
+  cd /usr/local/redis-cluster
+  
+  apt install redis-tools
+  
+  redis-cli --cluster create 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 127.0.0.1:7006 --cluster-replicas 1
+  
+  redis-cli --cluster create 106.14.172.7:7001 106.14.172.7:7002 106.14.172.7:7003 106.14.172.7:7004 106.14.172.7:7005 106.14.172.7:7006 --cluster-replicas 1
+  ```
+
+- **测试运行**
+
+  ```shell
+  cd /usr/local/redis-cluster
+  
+  redis-cli -c -p 7001
+  
+  set name hdgaadd
+  get hdgaadd
+  ```
+
+- **查看集群节点个数**
+
+  ```shell
+  cluster nodes
+  ```
+
+- **关闭Redis节点**
+
+  ```shell
+  cd /usr/local/redis-cluster
+  
+  touch shutdown.sh
+  ```
+  
+  ```shell
+  redis-cli -p 7001 shutdown
+  redis-cli -p 7002 shutdown
+  redis-cli -p 7003 shutdown
+  redis-cli -p 7004 shutdown
+  redis-cli -p 7005 shutdown
+  redis-cli -p 7006 shutdown
+  ```
+  
+  ```shell
+  // 赋予文件权限
+  chmod +x shutdown.sh
+  ```
+  
+  ```shell
+  ./shutdown.sh
+  ```
+  
+
+- dsjl
+
+  ```
+  touch rm.sh
+  ```
+
+  ```
+  dump.rdb
+  
+  cd redis01
+  rm -rf dump.rdb
+  cd ..
+  cd redis02
+  rm -rf dump.rdb
+  cd ..
+  cd redis03
+  rm -rf dump.rdb
+  cd ..
+  cd redis04
+  rm -rf dump.rdb
+  cd ..
+  cd redis05
+  rm -rf dump.rdb
+  cd ..
+  cd redis06
+  rm -rf dump.rdb
+  cd ..
+  ```
+
+  ```
+  // 赋予文件权限
+  chmod +x shutdown.sh
   ```
 
   
+
+## 2. SpringBoot集成
+
+> [official document](https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter#spring-boot-starter)
+
+
 
 
 
@@ -875,64 +1082,6 @@
 
 
 
-
-
-
-
-
-## Nacos1.4.3集群
-
-- **配置数据库源**
-
-  在nacos目录下的conf，修改**application.properties**，把以下注释去除
-
-  ```shell
-  #*************** Config Module Related Configurations ***************#
-  ### If use MySQL as datasource:
-   spring.datasource.platform=mysql
-  
-  ### Count of DB:
-   db.num=1
-  
-  ### Connect URL of DB:
-   db.url.0=jdbc:mysql://127.0.0.1:3306/nacos?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
-   db.user.0=账号
-   db.password.0=密码
-  
-  ```
-
-- **创建数据库**
-
-  ```mysql
-  create database nacos
-  ```
-
-- **创建表**
-
-  执行conf目录下的**nacos-mysql.sql**
-
-  ```mysql
-  CREATE TABLE `config_info` (
-    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `data_id` varchar(255) NOT NULL COMMENT 'data_id',
-    `group_id` varchar(255) DEFAULT NULL,
-    `content` longtext NOT NULL COMMENT 'content',
-    `md5` varchar(32) DEFAULT NULL COMMENT 'md5',
-    `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-    `src_user` text COMMENT 'source user',
-    `src_ip` varchar(50) DEFAULT NULL COMMENT 'source ip',
-    `app_name` varchar(128) DEFAULT NULL,
-    `tenant_id` varchar(128) DEFAULT '' COMMENT '租户字段',
-    `c_desc` varchar(256) DEFAULT NULL,
-    `c_use` varchar(64) DEFAULT NULL,
-    `effect` varchar(64) DEFAULT NULL,
-    `type` varchar(64) DEFAULT NULL,
-    `c_schema` text,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_configinfo_datagrouptenant` (`data_id`,`group_id`,`tenant_id`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='config_info';
-  ```
 
 
 

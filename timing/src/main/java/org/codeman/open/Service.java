@@ -22,7 +22,16 @@ import java.util.concurrent.TimeUnit;
 public class Service {
     public void setClock(Integer delaySecond) {
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://106.14.172.7:6379");
+        config.useClusterServers()
+                .setScanInterval(2000) // cluster state scan interval in milliseconds
+                // use "rediss://" for SSL connection
+//                .addNodeAddress("redis://106.14.172.7:7001", "redis://106.14.172.7:7002",  "redis://106.14.172.7:7003", "redis://106.14.172.7:7004", "redis://106.14.172.7:7005", "redis://106.14.172.7:7006");
+                .addNodeAddress("redis://106.14.172.7:7001", "redis://106.14.172.7:7002").addNodeAddress("redis://106.14.172.7:7003");
+
+//        RedissonClient redisson = Redisson.create(config);
+
+//        Config config = new Config();
+//        config.useSingleServer().setAddress("redis://106.14.172.7:6379");
         RedissonClient redissonClient = Redisson.create(config);
         RBlockingQueue<Clock> blockingFairQueue = redissonClient.getBlockingQueue("delay_queue");
         RDelayedQueue<Clock> delayedQueue = redissonClient.getDelayedQueue(blockingFairQueue);
