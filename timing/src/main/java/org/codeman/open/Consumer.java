@@ -1,17 +1,20 @@
-package org.codeman.config;
+package org.codeman.open;
 
 import lombok.extern.slf4j.Slf4j;
+import org.codeman.db.DBWrite;
 import org.codeman.repository.Clock;
 import org.redisson.Redisson;
 import org.redisson.api.RBlockingQueue;
+import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author hdgaadd
@@ -19,10 +22,12 @@ import java.util.Date;
  */
 @Component
 @Slf4j
-public class Runner implements ApplicationRunner {
+public class Consumer {
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
+    @Resource
+    private DBWrite dbWrite;
+
+    public void setClock(Integer delaySecond) throws IOException {
         Config config = new Config();
         config.useClusterServers().setScanInterval(2000)
                 .addNodeAddress("redis://106.14.172.7:7001", "redis://106.14.172.7:7002")
@@ -30,10 +35,12 @@ public class Runner implements ApplicationRunner {
 
         RedissonClient redissonClient = Redisson.create(config);
         RBlockingQueue<Clock> blockingFairQueue = redissonClient.getBlockingQueue("delay_queue");
+        RDelayedQueue<Clock> delayedQueue = redissonClient.getDelayedQueue(blockingFairQueue);
 
-        while (true) {
-            Clock callCdr = blockingFairQueue.take();
-            log.debug("time out: {} , clock created: {}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), callCdr.getTime());
-        }
+        Clock clock = new Clock().setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        // write db
+        dbWrite.write(clock);
+        delayedQueue.offer(clock, delaySecond, TimeUnit.SECONDS);
+        log.debug("create clock: {}", clock);
     }
 }

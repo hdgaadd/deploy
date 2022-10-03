@@ -193,6 +193,8 @@
 
 - **两种配置，两种运行方式**
 
+  > 建议two
+
   - **one**
 
     ```shell
@@ -501,6 +503,8 @@
 
 # Nacos多环境配置
 
+> deploy environment: Ubuntu  22.04 64位
+
 ## 1. Nacos1.4.3
 
 - **解压**
@@ -590,6 +594,8 @@
 
 # 定时系统方案
 
+> deploy environment: Ubuntu  22.04 64位
+
 ## 1. Redis集群搭建
 
 > [reference](https://blog.csdn.net/qq_42815754/article/details/82832335)
@@ -673,6 +679,8 @@
   cd /usr/local/redis-cluster
   
   touch start-all.sh
+  
+  vim start-all.sh
   ```
 
   ```shell
@@ -735,9 +743,24 @@
   gem install redis-3.0.0.gem
   ```
 
+- **关闭防火墙**
+
+  ```shell
+  // 关闭防火墙
+  systemctl stop firewalld.service
+  // 查看是否关闭
+  systemctl status firewalld.service
+  ```
+
+- **开启阿里云出入口**
+
+  ```shell
+  阿里云配置出入口7001 ~ 7006、17001 ~ 17006
+  ```
+
 - **启动集群**
 
-  > [运行命令reference](https://blog.csdn.net/huangxuanheng/article/details/123645185)
+  > [reference](https://blog.csdn.net/huangxuanheng/article/details/123645185)
 
   ```shell
   cp -r /usr/java/redis/redis-3.0.0/src/redis-trib.rb /usr/local/redis-cluster
@@ -746,8 +769,12 @@
   
   apt install redis-tools
   
+  // 只给内网访问
   redis-cli --cluster create 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 127.0.0.1:7006 --cluster-replicas 1
+  // 只给内网访问
+  redis-cli --cluster create 172.31.113.100:7001 172.31.113.100:7002 172.31.113.100:7003 172.31.113.100:7004 172.31.113.100:7005 172.31.113.100:7006 --cluster-replicas 1
   
+  // 外网允许访问
   redis-cli --cluster create 106.14.172.7:7001 106.14.172.7:7002 106.14.172.7:7003 106.14.172.7:7004 106.14.172.7:7005 106.14.172.7:7006 --cluster-replicas 1
   ```
 
@@ -770,12 +797,14 @@
 
 - **关闭Redis节点**
 
+  > 或者关闭Xshell
+
   ```shell
   cd /usr/local/redis-cluster
   
   touch shutdown.sh
   ```
-  
+
   ```shell
   redis-cli -p 7001 shutdown
   redis-cli -p 7002 shutdown
@@ -784,49 +813,53 @@
   redis-cli -p 7005 shutdown
   redis-cli -p 7006 shutdown
   ```
-  
+
   ```shell
   // 赋予文件权限
   chmod +x shutdown.sh
   ```
-  
+
   ```shell
   ./shutdown.sh
   ```
-  
 
-- dsjl
 
-  ```
+- **删除集群缓存**
+
+  ```shell
   touch rm.sh
   ```
 
-  ```
-  dump.rdb
-  
+  ```shell
   cd redis01
   rm -rf dump.rdb
+  rm -rf nodes.conf
   cd ..
   cd redis02
   rm -rf dump.rdb
+  rm -rf nodes.conf
   cd ..
   cd redis03
   rm -rf dump.rdb
+  rm -rf nodes.conf
   cd ..
   cd redis04
   rm -rf dump.rdb
+  rm -rf nodes.conf
   cd ..
   cd redis05
   rm -rf dump.rdb
+  rm -rf nodes.conf
   cd ..
   cd redis06
   rm -rf dump.rdb
+  rm -rf nodes.conf
   cd ..
   ```
 
-  ```
+  ```shell
   // 赋予文件权限
-  chmod +x shutdown.sh
+  chmod +x rm.sh
   ```
 
   
@@ -834,12 +867,69 @@
 ## 2. SpringBoot集成
 
 > [official document](https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter#spring-boot-starter)
+>
+> [官网集群配置reference](https://github.com/redisson/redisson/wiki/2.-Configuration#24-cluster-mode)
+
+- **Caused by: io.netty.channel.ConnectTimeoutException: connection timed out: 172.31.113.100/172.31.113.100:7001**
+
+  > [reference](https://blog.csdn.net/weixin_44197039/article/details/109906059)
+
+  修改redis01的**nodes.conf**，将172.31.113.100修改为公网
 
 
 
 
 
-# Ubuntu22.04部署
+## 3. bugs
+
+- **[ERR] Node 106.14.172.7:7006 is not empty. Either the node already knows other nodes (check with CLU**
+
+  需要关闭Redis服务，删除redis01等的dump.rdb、nodes.conf
+
+- **集群节点至少6个**
+
+  ```shell
+  bugs:
+  *** ERROR: Invalid configuration for cluster creation.
+  *** Redis Cluster requires at least 3 master nodes.
+  *** This is not possible with 3 nodes and 1 replicas per node.
+  *** At least 6 nodes are required.
+  ```
+
+- **Could not connect to Redis at 106.14.172.7:7001: Connection timed out**
+
+  > [reference](https://blog.csdn.net/tutukl/article/details/104672081)
+
+  ```shell
+  // 关闭防火墙
+  systemctl stop firewalld.service
+  // 查看是否关闭
+  systemctl status firewalld.service
+  ```
+
+- **Waiting for the cluster to join……**
+
+  > [reference](https://www.cnblogs.com/bogiang/p/15016091.html)
+
+  ```shell
+  阿里云配置出入口7001 ~ 7006、17001 ~ 17006
+  ```
+
+- **Caused by: io.netty.channel.ConnectTimeoutException: connection timed out: 172.31.113.100/172.31.113.100:7001**
+
+  > [reference](https://blog.csdn.net/weixin_44197039/article/details/109906059)
+
+  修改redis01的**nodes.conf**，将172.31.113.100修改为公网
+
+
+
+
+
+
+
+
+
+# Ubuntu(22.04 64位)部署
 
 ## aliyun.com reference
 
@@ -1227,11 +1317,30 @@
 
   
 
-## Kafka
+## Kafka2.13-2.8.0
 
-> [Index of /kafka/2.8.2 (apache.org)](https://downloads.apache.org/kafka/2.8.2/)
+> [download](https://kafka.apache.org/downloads)
+>
+> [reference]([Kafka2.8无Zookeeper模式下集群部署__哈利路亚的博客-CSDN博客_kafka2.8部署](https://blog.csdn.net/wanliti1314/article/details/116263788))
 
+- **启动**
 
+  ```shell
+  cd /usr/java/kafka/kafka_2.13-2.8.0
+  
+  // 生成集群id
+  ./bin/kafka-storage.sh random-uuid
+  
+  // 把集群id填充，如下:
+  ./bin/kafka-storage.sh format -t o_D3E4ZyRWSlszZe38IDgg -c ./config/kraft/server.properties
+  
+  // 启动
+  ./bin/kafka-server-start.sh ./config/kraft/server.properties
+  ```
+
+- **knolwedge**
+
+  - kafka2.80版本后，采用**Kraft**模式，脱离对zookeeper的依赖
 
 
 
