@@ -11,6 +11,7 @@ import org.redisson.config.Config;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,15 +26,18 @@ import java.util.concurrent.TimeUnit;
 public class Consumer {
 
     @Resource
+    private RedissonClient redissonClient;
+    @Resource
     private DBWrite dbWrite;
 
     public void setClock(Integer delaySecond) throws IOException {
-        Config config = new Config();
-        config.useClusterServers().setScanInterval(2000)
-                .addNodeAddress("redis://106.14.172.7:7001", "redis://106.14.172.7:7002")
-                .addNodeAddress("redis://106.14.172.7:7003");
+//        Config config = new Config();
+//        config.useClusterServers().setScanInterval(2000)
+//                .addNodeAddress("redis://106.14.172.7:7001", "redis://106.14.172.7:7002")
+//                .addNodeAddress("redis://106.14.172.7:7003");
+//        RedissonClient redissonClient = Redisson.create(config);
 
-        RedissonClient redissonClient = Redisson.create(config);
+
         RBlockingQueue<Clock> blockingFairQueue = redissonClient.getBlockingQueue("delay_queue");
         RDelayedQueue<Clock> delayedQueue = redissonClient.getDelayedQueue(blockingFairQueue);
 
@@ -41,6 +45,6 @@ public class Consumer {
         // write db
         dbWrite.write(clock);
         delayedQueue.offer(clock, delaySecond, TimeUnit.SECONDS);
-        log.debug("create clock: {}", clock);
+        log.info("create clock: {}", clock);
     }
 }

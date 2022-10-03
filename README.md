@@ -653,7 +653,7 @@
   ```shell
   daemonize yes
   
-  port 6001
+  port 7001
   
   ################################ REDIS CLUSTER  ###############################
   cluster-enabled yes
@@ -920,8 +920,16 @@
   > [reference](https://blog.csdn.net/weixin_44197039/article/details/109906059)
 
   修改redis01的**nodes.conf**，将172.31.113.100修改为公网
+  
+- **Unable to init enough connections amount! Only 2 of 3 were initialized. Re**
 
+  > [reference](https://www.codeleading.com/article/15436185156/)
 
+  修改redisson-spring-boot-starter的版本为3.16.8
+
+## 4.knowledge
+
+- application.yml配置可用代码形式配置
 
 
 
