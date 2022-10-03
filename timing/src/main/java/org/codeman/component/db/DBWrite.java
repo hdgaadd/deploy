@@ -1,6 +1,6 @@
-package org.codeman.db;
+package org.codeman.component.db;
 
-import org.codeman.repository.Clock;
+import org.codeman.component.repository.Clock;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

@@ -929,7 +929,7 @@
 
 ## 4.knowledge
 
-- application.yml配置可用代码形式配置
+- redisson.yaml配置相关信息，@Configuration读取该redisson.yaml配置，相当于在application.yml配置redisson.yaml
 
 
 
@@ -1330,6 +1330,8 @@
 > [download](https://kafka.apache.org/downloads)
 >
 > [reference]([Kafka2.8无Zookeeper模式下集群部署__哈利路亚的博客-CSDN博客_kafka2.8部署](https://blog.csdn.net/wanliti1314/article/details/116263788))
+>
+> [reference]([Apache Kafka：简单的命令行操作topic实现消息发送和接收_你是小KS的博客-CSDN博客_kafka命令行发送消息](https://blog.csdn.net/weixin_45492007/article/details/117193249))
 
 - **启动**
 
@@ -1344,6 +1346,33 @@
   
   // 启动
   ./bin/kafka-server-start.sh ./config/kraft/server.properties
+  ```
+
+- **关闭**
+
+  ```
+  窗口执行Ctrl + C
+  ```
+
+- **测试**
+
+  ```shell
+  cd /usr/java/kafka/kafka_2.13-2.8.0
+  
+  
+  // 创建主题
+  ./bin/kafka-topics.sh --create --topic test-events --bootstrap-server localhost:9092
+  
+  // 进入生产者端
+  ./bin/kafka-console-producer.sh --topic test-events --bootstrap-server localhost:9092
+  
+  // 新开一个窗口，进入消费者端
+  ./bin/kafka-console-consumer.sh --topic test-events --from-beginning --bootstrap-server localhost:9092
+  
+  
+  ./bin/kafka-console-consumer.sh --topic my-replicated-topic --from-beginning --bootstrap-server localhost:9092
+  
+  在生产者端发送消息，可在消费者端看见
   ```
 
 - **knolwedge**

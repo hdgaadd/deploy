@@ -18,7 +18,7 @@ public class RedissonConfig {
 
     @Bean
     public RedissonClient redisson() throws IOException {
-        Config config = Config.fromYAML(new ClassPathResource("redisson.yml").getInputStream());
+        Config config = Config.fromYAML(new ClassPathResource("redisson.yaml").getInputStream());
         RedissonClient redisson = Redisson.create(config);
         return redisson;
     }

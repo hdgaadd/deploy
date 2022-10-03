@@ -1,6 +1,9 @@
 package org.codeman.open;
 
+import org.codeman.component.redisson.PutInQueue;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,13 +22,23 @@ public class Controller {
 
     final static String response = "successful!";
 
+    private final static String TOPIC_NAME = "kafka-topic";
+
     @Resource
-    private Consumer service;
+    private KafkaTemplate<String, String> kafkaTemplate;
+    @Resource
+    private PutInQueue service;
 
     @PostMapping()
     public String setClock(@RequestParam Integer delaySecond) throws IOException {
         service.setClock(delaySecond);
         return response;
+    }
+
+    @RequestMapping("/send")
+    public String send(@RequestParam("msg") String msg) {
+        kafkaTemplate.send(TOPIC_NAME, "key", msg);
+        return String.format("message %s successful！", msg);
     }
 
 }

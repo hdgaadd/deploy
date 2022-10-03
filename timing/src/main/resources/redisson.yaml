@@ -15,7 +15,7 @@ clusterServersConfig:
   subscriptionConnectionPoolSize: 50
   slaveConnectionMinimumIdleSize: 24
   slaveConnectionPoolSize: 64
-  masterConnectionMinimumIdleSize: 24
+  masterConnectionMinimumIdleSize: 1
   masterConnectionPoolSize: 64
   readMode: "SLAVE"
   subscriptionMode: "SLAVE"

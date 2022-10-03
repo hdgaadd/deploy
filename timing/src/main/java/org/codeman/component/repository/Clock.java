@@ -1,4 +1,4 @@
-package org.codeman.repository;
+package org.codeman.component.repository;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
