@@ -1,5 +1,6 @@
 package org.codeman.component.kafka;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -10,13 +11,12 @@ import org.springframework.stereotype.Component;
  * Created on 2022/10/03
  */
 @Component
+@Slf4j
 public class Consumer {
 
-    @KafkaListener(topics = "kafka-topic", groupId = "kafka-group")
+    @KafkaListener(topics = "clock-topic", groupId = "kafka-group")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack) {
-        String value = record.value();
-        System.out.println("message: " + value);
-        System.out.println("record: " + record);
+        log.info("listener get message: " + record.value());
         ack.acknowledge();
     }
 }

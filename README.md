@@ -57,7 +57,7 @@
 
 
 
-## 2. MySQL8.0.30(自带)
+## 2. MySQL8.0.30(Debian)
 
 > [reference](https://blog.csdn.net/wavehaha/article/details/114730222)
 
@@ -359,7 +359,7 @@
 
 
 
-## 4. RabbitMQ(自带)
+## 4. RabbitMQ(Debian)
 
 > [reference address](https://www.jianshu.com/p/5c8c4495827f)
 
@@ -754,6 +754,8 @@
 
 - **开启阿里云出入口**
 
+  入口配置reaston: 以**106.14.172.7**命令进行启动，故节点以**公网ip**进行相互访问，且节点之间访问还需使用到**节点端口 + 1000**端口
+
   ```shell
   阿里云配置出入口7001 ~ 7006、17001 ~ 17006
   ```
@@ -880,7 +882,77 @@
 
 
 
-## 3. bugs
+## 3. Kafka2.13-2.8.0
+
+### ubuntu
+
+> [download](https://kafka.apache.org/downloads)
+>
+> [reference](https://blog.csdn.net/wanliti1314/article/details/116263788)
+>
+> [reference](https://blog.csdn.net/weixin_45492007/article/details/117193249)
+
+- **启动**
+
+  ```shell
+  cd /usr/java/kafka/kafka_2.13-2.8.0
+  
+  // 生成集群id
+  ./bin/kafka-storage.sh random-uuid
+  
+  // 把集群id填充，如下:
+  ./bin/kafka-storage.sh format -t o_D3E4ZyRWSlszZe38IDgg -c ./config/kraft/server.properties
+  
+  // 启动
+  ./bin/kafka-server-start.sh ./config/kraft/server.properties
+  ```
+
+- **关闭**
+
+  ```
+  窗口执行Ctrl + C
+  ```
+
+- **测试**
+
+  ```shell
+  cd /usr/java/kafka/kafka_2.13-2.8.0
+  
+  
+  // 创建主题
+  ./bin/kafka-topics.sh --create --topic kafka-topic-test --bootstrap-server localhost:9092
+  
+  // 进入生产者端
+  ./bin/kafka-console-producer.sh --topic kafka-topic-test --bootstrap-server localhost:9092
+  
+  // 新开一个窗口，进入消费者端
+  ./bin/kafka-console-consumer.sh --topic kafka-topic-test --from-beginning --bootstrap-server localhost:9092
+  
+  在生产者端发送消息，可在消费者端看见
+  ```
+
+- **knolwedge**
+
+  - kafka2.80版本后，采用**Kraft**模式，脱离对zookeeper的依赖
+
+### windows
+
+> [ubuntu测试不通，改用windows 安装kafka]([windows下安装kafka_晨港飞燕的博客-CSDN博客_kafka windows](https://blog.csdn.net/qq877507054/article/details/116355893))
+>
+> [bugs reference](https://blog.csdn.net/fct2001140269/article/details/84105731)
+
+- ```shell
+  #配置
+  
+  log.dirs=D:\kafka_2.13-2.8.0\logs
+  
+  listeners=PLAINTEXT://localhost:9092
+  advertised.listeners=PLAINTEXT://localhost:9092
+  ```
+
+  
+
+## 4. bugs
 
 - **[ERR] Node 106.14.172.7:7006 is not empty. Either the node already knows other nodes (check with CLU**
 
@@ -927,9 +999,10 @@
 
   修改redisson-spring-boot-starter的版本为3.16.8
 
-## 4.knowledge
+## 5. knowledge
 
 - redisson.yaml配置相关信息，@Configuration读取该redisson.yaml配置，相当于在application.yml配置redisson.yaml
+- 访问Redis6379端口，服务器不会以6379端口为出口方向，向客户端发送消息，而是以主机与主机之间联结的某个端口进行通信
 
 
 
@@ -1190,11 +1263,11 @@
 
 
 
-## Redis(自带)
+## Redis(Debian)
 
 > [reference](https://www.redis.com.cn/redis-installation-on-ubuntu.html)
 
-- **安装ubuntu自带的Redis**
+- **安装**
 
   ```shell
   sudo apt update 
@@ -1323,61 +1396,6 @@
   ./zkServer.sh stop
   ```
 
-  
-
-## Kafka2.13-2.8.0
-
-> [download](https://kafka.apache.org/downloads)
->
-> [reference]([Kafka2.8无Zookeeper模式下集群部署__哈利路亚的博客-CSDN博客_kafka2.8部署](https://blog.csdn.net/wanliti1314/article/details/116263788))
->
-> [reference]([Apache Kafka：简单的命令行操作topic实现消息发送和接收_你是小KS的博客-CSDN博客_kafka命令行发送消息](https://blog.csdn.net/weixin_45492007/article/details/117193249))
-
-- **启动**
-
-  ```shell
-  cd /usr/java/kafka/kafka_2.13-2.8.0
-  
-  // 生成集群id
-  ./bin/kafka-storage.sh random-uuid
-  
-  // 把集群id填充，如下:
-  ./bin/kafka-storage.sh format -t o_D3E4ZyRWSlszZe38IDgg -c ./config/kraft/server.properties
-  
-  // 启动
-  ./bin/kafka-server-start.sh ./config/kraft/server.properties
-  ```
-
-- **关闭**
-
-  ```
-  窗口执行Ctrl + C
-  ```
-
-- **测试**
-
-  ```shell
-  cd /usr/java/kafka/kafka_2.13-2.8.0
-  
-  
-  // 创建主题
-  ./bin/kafka-topics.sh --create --topic test-events --bootstrap-server localhost:9092
-  
-  // 进入生产者端
-  ./bin/kafka-console-producer.sh --topic test-events --bootstrap-server localhost:9092
-  
-  // 新开一个窗口，进入消费者端
-  ./bin/kafka-console-consumer.sh --topic test-events --from-beginning --bootstrap-server localhost:9092
-  
-  
-  ./bin/kafka-console-consumer.sh --topic my-replicated-topic --from-beginning --bootstrap-server localhost:9092
-  
-  在生产者端发送消息，可在消费者端看见
-  ```
-
-- **knolwedge**
-
-  - kafka2.80版本后，采用**Kraft**模式，脱离对zookeeper的依赖
 
 
 
