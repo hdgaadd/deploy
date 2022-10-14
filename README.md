@@ -937,17 +937,27 @@
 
 ### windows
 
-> [ubuntu测试不通，改用windows 安装kafka]([windows下安装kafka_晨港飞燕的博客-CSDN博客_kafka windows](https://blog.csdn.net/qq877507054/article/details/116355893))
+> [ubuntu测试不通，改用windows 安装kafka](https://blog.csdn.net/qq877507054/article/details/116355893)
 >
 > [bugs reference](https://blog.csdn.net/fct2001140269/article/details/84105731)
 
-- ```shell
-  #配置
+- **配置**
+
+  ```shell
+  # 配置server.properties
   
   log.dirs=D:\kafka_2.13-2.8.0\logs
   
   listeners=PLAINTEXT://localhost:9092
   advertised.listeners=PLAINTEXT://localhost:9092
+  ```
+
+- **启动**
+
+  ```shell
+  cd D:\kafka_2.13-2.8.0\bin
+  
+  kafka-server-start.bat ..\..\config\server.properties
   ```
 
   

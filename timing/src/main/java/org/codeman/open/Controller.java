@@ -20,17 +20,13 @@ import java.io.IOException;
 @RestController
 public class Controller {
 
-    final static String response = "successful!";
-
-    @Resource
-    private KafkaTemplate<String, String> kafkaTemplate;
     @Resource
     private PutInQueue service;
 
     @PostMapping()
     public String setClock(@RequestParam Integer delaySecond) throws IOException {
         service.setClock(delaySecond);
-        return response;
+        return "successful!";
     }
 
 }
