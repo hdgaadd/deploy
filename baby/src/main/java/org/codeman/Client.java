@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author hdgaadd
- * Created on 2022/09/14
+ * created on 2022/09/14
  *
  * http://localhost:8066
  *
