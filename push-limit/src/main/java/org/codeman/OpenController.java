@@ -18,8 +18,8 @@ public class OpenController {
     private InsideService service;
 
     @GetMapping()
-    public String pushMessage(String msg) {
-        return service.pushMessage(msg);
+    public void putMsg(String msg) {
+        service.pushMsg(msg);
     }
 
 }

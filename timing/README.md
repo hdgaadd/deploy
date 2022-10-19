@@ -361,7 +361,7 @@
 - **启动**
 
   ```shell
-  cd D:\kafka_2.13-2.8.0\bin
+  cd D:\kafka_2.13-2.8.0\bin\windows
   
   kafka-server-start.bat ..\..\config\server.properties
   ```
