@@ -9,7 +9,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * @author hdgaadd
- * Created on 2022/09/24
+ * created on 2022/09/24
  */
 public class MQConnectionUtil {
     public static Channel getChannel() throws IOException, TimeoutException {

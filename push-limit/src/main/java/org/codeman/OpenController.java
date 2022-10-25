@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 
 /**
  * @author hdgaadd
- * Created on 2022/09/14
+ * created on 2022/09/14
  *
  * design: 推送消息 -> 1. 正常调用 || 2. 限流, 写入MQ -> 消费MQ，消息入库 -> 定时任务进行消息重推
  */

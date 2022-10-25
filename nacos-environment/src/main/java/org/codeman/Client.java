@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author hdgaadd
- * Created on 2022/09/14
+ * created on 2022/09/14
  *
  * nacos配置文件参考:
  *     Data ID: environment-dev.yaml

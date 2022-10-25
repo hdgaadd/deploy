@@ -8,7 +8,7 @@ import org.codeman.util.MQConnectionUtil;
 
 /**
  * @author hdgaadd
- * Created on 2022/09/24
+ * created on 2022/09/24
  */
 @Slf4j
 public class QueueClient {

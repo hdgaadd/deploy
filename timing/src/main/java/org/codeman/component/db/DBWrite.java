@@ -8,7 +8,7 @@ import java.io.RandomAccessFile;
 
 /**
  * @author hdgaadd
- * Created on 2022/10/03
+ * created on 2022/10/03
  */
 @Component
 public class DBWrite {

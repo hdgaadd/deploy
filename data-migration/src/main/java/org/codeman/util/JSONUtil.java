@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 /**
  * @author hdgaadd
- * Created on 2022/09/24
+ * created on 2022/09/24
  *
  * INSERT INTO `test`(`id`, `name`) VALUES (1, '666');
  */
