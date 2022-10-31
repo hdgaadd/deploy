@@ -1,4 +1,4 @@
-package com.codeman.domain;
+package com.codeman.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -7,12 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * <p>
- * 
- * </p>
- *
  * @author hdgaadd
- * @since 2021-12-09
+ * created on 2021/12/09
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -37,6 +33,5 @@ public class SeckillOrder implements Serializable {
     private LocalDateTime createTime;
 
     private LocalDateTime payTime;
-
 
 }

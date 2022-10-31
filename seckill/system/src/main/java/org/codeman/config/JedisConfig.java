@@ -10,7 +10,7 @@ import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * @author hdgaadd
- * created on 2021/12/10/00:13
+ * created on 2021/12/10
  */
 @Configuration
 public class JedisConfig extends CachingConfigurerSupport {
@@ -28,7 +28,6 @@ public class JedisConfig extends CachingConfigurerSupport {
     private Integer MAXIDLE;
     @Value("${spring.redis.pool.min-idle}")
     private Integer MINIDLE;
-
 
     @Bean
     public JedisPool jedisFactor() {

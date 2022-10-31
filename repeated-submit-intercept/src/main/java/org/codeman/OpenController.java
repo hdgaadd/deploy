@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 public class OpenController {
 
     @Resource
-    private Service service;
+    private InsideService service;
 
     @RequestMapping("/repeatSubmit")
     public String testSubmit() throws InterruptedException {

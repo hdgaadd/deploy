@@ -1,22 +1,21 @@
 package org.codeman.component;
 
-/**
- * @author hdgaadd
- * created on 2022/03/07
- */
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 
+/**
+ * @author hdgaadd
+ * created on 2022/03/07
+ */
 @Component
 public class RedisLock {
 
-    @Autowired
+    @Resource
     private StringRedisTemplate stringRedisTemplate;
 
     private static final Long RELEASE_SUCCESS = 1L;

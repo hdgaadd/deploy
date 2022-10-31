@@ -1,11 +1,11 @@
 package org.codeman.component;
 
-import com.codeman.domain.SeckillActivity;
+import com.codeman.entity.SeckillActivity;
 import com.codeman.mapper.SeckillActivityMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import util.LOG;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -14,9 +14,10 @@ import static org.codeman.constant.RedisKey.STOCK;
 
 /**
  * @author hdgaadd
- * created on 2021/12/10/00:43
+ * created on 2021/12/10
  */
 @Component
+@Slf4j
 public class RedisStartApplication implements ApplicationRunner {
     @Resource
     private RedisService redisService;
@@ -29,6 +30,6 @@ public class RedisStartApplication implements ApplicationRunner {
         for (SeckillActivity activity : seckillActivities) {
             redisService.setKey(STOCK.toString() + activity.getId(), activity.getAvailableStock());
         }
-        LOG.log("redis初始化成功");
+        log.info("redis初始化成功");
     }
 }

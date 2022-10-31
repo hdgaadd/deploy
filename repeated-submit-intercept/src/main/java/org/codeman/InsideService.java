@@ -7,7 +7,7 @@ import org.codeman.component.BanRepeatSubmit;
  * created on 2022/10/30
  */
 @org.springframework.stereotype.Service
-public class Service {
+public class InsideService {
 
     @BanRepeatSubmit(lockTime = 6)
     public String businessMethod() throws InterruptedException {

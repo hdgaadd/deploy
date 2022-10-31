@@ -5,13 +5,15 @@ import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  * @author hdgaadd
  * created on 2021/12/12
  */
 @Service
 public class RocketMQService {
-    @Autowired
+    @Resource
     private RocketMQTemplate rocketMQTemplate;
 
     public void sendMessage(String topic, String messageBody) throws Exception {

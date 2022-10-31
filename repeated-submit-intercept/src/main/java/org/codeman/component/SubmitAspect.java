@@ -10,23 +10,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
-
-
-
 
 /**
  * @author hdgaadd
  * created on 2022/03/07
- * description: 对添加防止重复提交注解，实现具体逻辑
  */
 @Aspect
 @Component
 @Slf4j
 public class SubmitAspect {
 
-    @Autowired
+    @Resource
     private RedisLock redisLock;
 
     private int executeCount = 0;
@@ -58,13 +55,12 @@ public class SubmitAspect {
         // 把客户端id作为值
         String value = getClientId();
 
-        String executeMsg = String.format("第%s次执行: ", ++executeCount);
         // 获取锁
         boolean isLock = redisLock.tryLock(key, value, lockTime);
+        String executeMsg = String.format("第%s次执行: ", ++executeCount);
 
         if (isLock) {
             log.info(executeMsg + "获取锁成功");
-
             try {
                 // 获取锁，则执行业务逻辑
                 return proceedingJoinPoint.proceed();
