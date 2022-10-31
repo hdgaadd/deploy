@@ -1,9 +1,9 @@
 package org.codeman.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.codeman.entity.SeckillActivity;
-import com.codeman.entity.SeckillOrder;
-import com.codeman.mapper.SeckillActivityMapper;
+import org.codeman.entity.SeckillActivity;
+import org.codeman.entity.SeckillOrder;
+import org.codeman.mapper.SeckillActivityMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.codeman.service.RocketMQService;
 import org.springframework.stereotype.Service;

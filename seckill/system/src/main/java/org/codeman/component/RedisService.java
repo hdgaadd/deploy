@@ -1,6 +1,6 @@
 package org.codeman.component;
 
-import com.codeman.entity.SeckillOrder;
+import org.codeman.entity.SeckillOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;

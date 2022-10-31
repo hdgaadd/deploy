@@ -2,10 +2,10 @@ package org.codeman.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.codeman.entity.SeckillActivity;
-import com.codeman.entity.SeckillOrder;
-import com.codeman.mapper.SeckillActivityMapper;
-import com.codeman.mapper.SeckillOrderMapper;
+import org.codeman.entity.SeckillActivity;
+import org.codeman.entity.SeckillOrder;
+import org.codeman.mapper.SeckillActivityMapper;
+import org.codeman.mapper.SeckillOrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.codeman.component.RedisService;
 import org.codeman.component.RocketMQService;
@@ -25,7 +25,7 @@ import java.util.Random;
  */
 @Service
 @Slf4j
-public class SeckillOversellServiceImpl implements SeckillService {
+public class SeckillServiceImpl implements SeckillService {
     @Resource
     private RedisService redisService;
     @Resource

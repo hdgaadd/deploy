@@ -1,6 +1,6 @@
-package com.codeman.mapper;
+package org.codeman.mapper;
 
-import com.codeman.entity.SeckillOrder;
+import org.codeman.entity.SeckillOrder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

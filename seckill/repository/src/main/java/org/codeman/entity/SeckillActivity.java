@@ -1,4 +1,4 @@
-package com.codeman.entity;
+package org.codeman.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

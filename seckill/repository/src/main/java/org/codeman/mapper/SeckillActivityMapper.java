@@ -1,6 +1,6 @@
-package com.codeman.mapper;
+package org.codeman.mapper;
 
-import com.codeman.entity.SeckillActivity;
+import org.codeman.entity.SeckillActivity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

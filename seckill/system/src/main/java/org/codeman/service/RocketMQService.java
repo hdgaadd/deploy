@@ -1,6 +1,6 @@
 package org.codeman.service;
 
-import com.codeman.entity.SeckillOrder;
+import org.codeman.entity.SeckillOrder;
 
 /**
  * @author hdgaadd

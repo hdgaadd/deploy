@@ -1,7 +1,7 @@
 package org.codeman.component;
 
-import com.codeman.entity.SeckillActivity;
-import com.codeman.mapper.SeckillActivityMapper;
+import org.codeman.entity.SeckillActivity;
+import org.codeman.mapper.SeckillActivityMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

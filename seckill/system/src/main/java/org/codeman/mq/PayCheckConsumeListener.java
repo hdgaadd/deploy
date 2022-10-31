@@ -2,8 +2,8 @@ package org.codeman.mq;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.codeman.entity.SeckillOrder;
-import com.codeman.mapper.SeckillOrderMapper;
+import org.codeman.entity.SeckillOrder;
+import org.codeman.mapper.SeckillOrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;

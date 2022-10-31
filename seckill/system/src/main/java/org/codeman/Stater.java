@@ -7,11 +7,9 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 
 @SpringBootApplication
 @EnableOpenApi
-@MapperScan({"com.codeman.mapper", "com.codeman.dao"})
-public class SeckillApplication {
-
+@MapperScan({"org.codeman.mapper"})
+public class Stater {
 	public static void main(String[] args) {
-		SpringApplication.run(SeckillApplication.class, args);
+		SpringApplication.run(Stater.class, args);
 	}
-
 }
