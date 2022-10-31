@@ -9,13 +9,8 @@ deploy
 ├── push-limit -- 消息重推方案
 ├── repeated-submit-intercept -- 防重复提交解决方案
 ├── seckill -- 秒杀系统设计
-     ├── common
-     ├── dp
-     ├── repository
-     └── system
 ├── timing -- 三高定时系统
 └── z-resource
-     ├── images
      └── tool
 ```
 
