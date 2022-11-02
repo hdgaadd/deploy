@@ -9,7 +9,9 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 @EnableOpenApi
 @MapperScan({"org.codeman.mapper"})
 public class Stater {
+
 	public static void main(String[] args) {
 		SpringApplication.run(Stater.class, args);
 	}
+
 }

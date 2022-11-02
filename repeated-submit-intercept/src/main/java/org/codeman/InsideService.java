@@ -1,12 +1,13 @@
 package org.codeman;
 
 import org.codeman.component.BanRepeatSubmit;
+import org.springframework.stereotype.Service;
 
 /**
  * @author hdgaadd
  * created on 2022/10/30
  */
-@org.springframework.stereotype.Service
+@Service
 public class InsideService {
 
     @BanRepeatSubmit(lockTime = 6)
