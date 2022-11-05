@@ -22,7 +22,7 @@ import java.util.List;
  * @author hdgaadd
  * created on 2021/12/13
  *
- * design: Redis + Lua解决秒杀库存超卖现象 -> RocketMQ解决实际库存超卖现象 -> Sentine限流
+ * design: Redis + Lua解决秒杀库存超卖现象 -> RocketMQ解决实际库存超卖现象
  *
  * knowledge: RocketMQ的功能，可使用事务代替
  */

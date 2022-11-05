@@ -7,7 +7,7 @@ import com.google.common.hash.Hashing;
 /**
  * @author hdgaadd
  * created on 2022/11/05
- * <p>
+ *
  * from: https://github.com/garybai/demo/blob/502417d09b71651f24da3069eb47c36e6a30bfa4/bloom-filter-demo/src/main/java/com/example/bloomfilterdemo/config/BloomFilterHelper.java
  */
 public class BloomFilterHelper<T> {
