@@ -17,17 +17,19 @@ public class InsideService {
     @Resource
     private BloomFilterHelper<String> bloomFilterHelper;
 
-    public void setConfigSwitch(String configKey) {
-        int[] bitArr = bloomFilterHelper.murmurHashOffset(configKey);
+    private static final String CONFIG_KEY = "config_key";
+
+    public void setConfigSwitch(String configVal) {
+        int[] bitArr = bloomFilterHelper.murmurHashOffset(configVal);
         for (int bit : bitArr) {
-            redisTemplate.opsForValue().setBit(configKey, bit, true);
+            redisTemplate.opsForValue().setBit(CONFIG_KEY, bit, true);
         }
     }
 
-    public boolean getConfigSwitch(String configKey) {
-        int[] bitArr = bloomFilterHelper.murmurHashOffset(configKey);
+    public boolean getConfigSwitch(String configVal) {
+        int[] bitArr = bloomFilterHelper.murmurHashOffset(configVal);
         for (int bit : bitArr) {
-            Boolean isBitExist = redisTemplate.opsForValue().getBit(configKey, bit);
+            Boolean isBitExist = redisTemplate.opsForValue().getBit(CONFIG_KEY, bit);
             if (!isBitExist) {
                 return false;
             }
