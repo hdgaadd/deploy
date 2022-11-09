@@ -21,7 +21,7 @@ public class RocketMQServiceImpl implements RocketMQService {
     private SeckillActivityMapper seckillActivityMapper;
 
     /**
-     * 创建订单，更新数据库，限定库存 + 1，可用库存 - 1
+     * 创建订单，更新数据库，限定库存 + 1
      *
      * @param actId
      * @return
@@ -49,7 +49,7 @@ public class RocketMQServiceImpl implements RocketMQService {
     }
 
     /**
-     * 支付成功，更新数据库库存
+     * 支付成功，限定库存 - 1，可用库存 - 1
      *
      * @param actId
      * @return
