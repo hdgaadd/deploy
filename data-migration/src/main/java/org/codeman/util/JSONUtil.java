@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONObject;
  * INSERT INTO `test`(`id`, `name`) VALUES (1, '666');
  */
 public class JSONUtil {
+
     private static final String EXAMPLE_JSON = "{\"database\":\"hdgaadd\",\"table\":\"test\",\"type\":\"insert\",\"ts\":1663997472,\"xid\":32358,\"commit\":true,\"data\":{\"id\":1,\"name\":\"666\"}}";
 
     public static String JSONToSQL(String JSONStr) {
