@@ -1,16 +1,18 @@
 ```lua
 deploy
-├── concurrency-method -- 高并发低延迟-方法设计
+├── concurrency-method -- 高并发-方法设计
 ├── config-switch -- 配置开关
 ├── data-migration -- 数据迁移方案
      └── images
-├── preheat-limit -- 海量数据-预热限流方案
+├── preheat-limit -- 数据预热、限流
 ├── push-limit -- 消息重推方案
-├── repeated-submit-intercept -- 防重复提交解决方案
+├── refresh-cache -- 通知集群节点刷新缓存
+├── repeated-submit-intercept -- 防重复提交
 ├── seckill -- 秒杀系统设计
-├── timing -- 三高定时系统设计
+├── timing -- 定时系统设计
 └── z-resource
      ├── ans
+     ├── images
      └── tool
 ```
 
