@@ -16,6 +16,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author hdgaadd
  * created on 2022/09/14
  *
+ * from: https://github.com/zhugezifang/hdfs-to-redis
+ *
  * question: 针对大量数据写入Redis, 造成的: 1.Redis有写入限制, 数据写入可能失败 2.大量写入造成Redis瞬时流量高峰
  *
  * solution: 1. qps过高则进行写入休眠 2.每1000条数据才提交一次Redis, 而不是一条一次
@@ -54,10 +56,10 @@ public class Client {
                         atomicLong.incrementAndGet();
                         qpsControll(start, atomicLong);
 
-                        // 每1000条提交一次
                         System.out.println(v.getString(0) + " , " +  v.getString(1));
                         pipeline.sadd(v.getString(0), v.getString(1));
-                        if (atomicLong.get() % 3 == 0) {
+                        // 每1000条提交一次
+                        if (atomicLong.get() % 1000 == 0) {
                             pipeline.sync();
                         }
                     }

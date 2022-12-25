@@ -18,7 +18,7 @@ import java.util.HashMap;
  */
 public class Notifier {
 
-    private final static int sessionTimeout =  5000;
+    private final static int SESSION_TIMEOUT =  5000;
 
     private final static String ZOOKEEPER_HOST = "127.0.0.1:2181";
 
@@ -26,13 +26,13 @@ public class Notifier {
 
     public static void main(String[] args) throws Exception {
         // initialize
-        ZooKeeper zooKeeper = new ZooKeeper(ZOOKEEPER_HOST, sessionTimeout, null);
+        ZooKeeper zooKeeper = new ZooKeeper(ZOOKEEPER_HOST, SESSION_TIMEOUT, null);
         ZKPaths.mkdirs(zooKeeper, ZOOKEEPER_PATH);
 
         CuratorFramework notifier = CuratorFrameworkFactory
                 .builder()
                 .connectString(ZOOKEEPER_HOST)
-                .sessionTimeoutMs(sessionTimeout)
+                .sessionTimeoutMs(SESSION_TIMEOUT)
                 .retryPolicy(new ExponentialBackoffRetry(1000, 10, 5000))
                 .build();
          notifier.start();
@@ -44,11 +44,9 @@ public class Notifier {
 
         Stat stat = new Stat();
         // 读取旧区数据
-        byte[] oldBytes = notifier.getData().storingStatIn(stat).forPath(ZOOKEEPER_PATH);
+        notifier.getData().storingStatIn(stat).forPath(ZOOKEEPER_PATH);
 
         Stat setStat = notifier.setData().withVersion(stat.getVersion()).forPath(ZOOKEEPER_PATH, msgBytes);
         System.out.println(String.format("notifier send msg : %s", JSON.toJSONString(setStat)));
-
-        Thread.sleep(60 * 60 * 1000);
     }
 }

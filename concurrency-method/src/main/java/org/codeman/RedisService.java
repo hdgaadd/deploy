@@ -21,17 +21,10 @@ public class RedisService {
     @Resource
     private RedissonClient redissonClient;
 
-    /**
-     * 客户端
-     */
     private static final Jedis jedisClient = new Jedis("localhost", 6379);
-    /**
-     * key
-     */
+
     private static final String KEY = "key";
-    /**
-     * Redis分布式锁
-     */
+
     private static final String KEY_MUTEX = "key_mutex";
     /**
      * 缓存时间
@@ -57,7 +50,10 @@ public class RedisService {
                     curValue = getValueByMySQL();
 
                     curValue = StringUtils.isNotBlank(curValue) ? curValue : "";
-                    // setex(): key存在时覆盖 setnx(): key存在不做动作
+                    // setex name 3 hdgaadd
+                    // 与下面命令效果相同，但具有原子性的功能，设置value的同时设置失效时间
+                    // set name hdgaadd
+                    // expire name 3
                     jedisClient.setex(KEY, REWARD_LIST_EXPIRE_SECOND, curValue);
                 }
                 return curValue;

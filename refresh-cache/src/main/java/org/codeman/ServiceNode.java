@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
  */
 public class ServiceNode {
 
-    private final static int sessionTimeout =  5000;
+    private final static int SESSION_TIMEOUT =  5000;
 
     private final static String ZOOKEEPER_HOST = "127.0.0.1:2181";
 
@@ -30,7 +30,7 @@ public class ServiceNode {
     private final static ExecutorService threadPool = Executors.newFixedThreadPool(5);
 
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
-        ZooKeeper zooKeeper = new ZooKeeper(ZOOKEEPER_HOST, sessionTimeout, null);
+        ZooKeeper zooKeeper = new ZooKeeper(ZOOKEEPER_HOST, SESSION_TIMEOUT, null);
         ZKPaths.mkdirs(zooKeeper, ZOOKEEPER_PATH);
 
         for (int i = 0; i < 5; i++) {
@@ -56,7 +56,7 @@ public class ServiceNode {
         CuratorFramework serverNode = CuratorFrameworkFactory
                 .builder()
                 .connectString(ZOOKEEPER_HOST)
-                .sessionTimeoutMs(sessionTimeout)
+                .sessionTimeoutMs(SESSION_TIMEOUT)
                 .retryPolicy(new ExponentialBackoffRetry(1000, 10, 5000))
                 .build();
         serverNode.start();
