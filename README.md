@@ -1,6 +1,6 @@
 ```lua
 deploy
-├── concurrency-method -- 高并发方法
+├── concurrency-method -- 分布式锁方法
 ├── config-switch -- 配置开关
 ├── data-migration -- 数据迁移方案
      └── images
