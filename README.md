@@ -4,7 +4,7 @@ deploy
 ├── config-switch -- 配置开关
 ├── data-migration -- 数据迁移方案
      └── images
-├── preheat-limit -- 数据预热、限流
+├── preheat-limit
 ├── push-limit -- 消息重推
 ├── refresh-cache -- 通知集群节点刷新缓存
 ├── repeated-submit-intercept -- 防重复提交
